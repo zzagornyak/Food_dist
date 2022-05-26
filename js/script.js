@@ -199,6 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i of allMenues) {
         new MenuCard(i.imgDir,i.menuSubtitle, i.menuDescription, i.menuTotalCost,menuFieldContainer, "menu__item").addToHTML();
     }
+
+
 // Post 
 
     const forms = document.querySelectorAll("form");
@@ -225,41 +227,35 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
             // Добавление в конец формы
             form.insertAdjacentElement("afterend", statusMessage);
-            // Создание пост запроса 
-            const request = new XMLHttpRequest();
-            request.open("POST", "server.php");
             // Создание дата файла
             const formData = new FormData(form);
 
-// // Вариант 1 если нужно отправить в формате формдата
-//             // Отправка дата файла
-//             request.send(formData);
-
-// Вариант 2 если нужно отослать в формате json 
-            request.setRequestHeader("Content-type", "application/json");
+            // // Вариант 2 если нужно отослать в формате json 
             const object = {};
             formData.forEach(function(value, key){
                 object[key] = value;
             });
             const json = JSON.stringify(object);
-            request.send(json);
 
-            form.reset();
-            setTimeout(()=>{
-                statusMessage.remove();
-            }, 3000);
-            // Обработка ответа
-            request.addEventListener("load", () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    showThanksDialog(message.succes);
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    showThanksDialog(message.failure);
-
+        // Создание пост запроса с помощью fetch
+            fetch("server1.php", {
+                method: "POST",
+                body: formData,
+                // Если json нужно указать headers
+                headers: {
+                    "Content-type": "application/json"
                 }
+            }).then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksDialog(message.succes);
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksDialog(message.failure);
+            }).finally(() => {
+                form.reset();
             });
+
         });
     }
     // Красивое оповещение
@@ -285,11 +281,12 @@ document.addEventListener("DOMContentLoaded", () => {
             prevModalDialog.classList.remove("hide");
             closeModal();
         }, 4000);
+
     }
 
 
 
-    
+
 
 });
 
