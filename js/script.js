@@ -201,7 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-// Post 
+// Post запрос
+
 
     const forms = document.querySelectorAll("form");
     // Сообщения для пользователя при обрабоке пост запроса
@@ -237,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const json = JSON.stringify(object);
 
-        // Создание пост запроса с помощью fetch
+            // Создание пост запроса с помощью fetch
             fetch("server1.php", {
                 method: "POST",
                 body: formData,
