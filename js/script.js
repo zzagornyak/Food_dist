@@ -134,11 +134,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Создаём класс
     class MenuCard {
-        constructor(imgDir,menuSubtitle, menuDescription, menuTotalCost, parentSelector, ...classes ) {
-            this.imgDir = imgDir;
-            this.menuSubtitle = menuSubtitle;
-            this.menuDescription = menuDescription;
-            this.menuTotalCost = menuTotalCost;
+        constructor(img,title, descr, price, parentSelector, ...classes ) {
+            this.img = img;
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
             this.parentSelector = parentSelector;
             this.alt = "image";
             this.classes = classes;
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         // Метод обмен валют
         changeToUAH() {
-            this.menuTotalCost = this.menuTotalCost * this.transfer;
+            this.price = this.price * this.transfer;
         }
         // Метод добавления на страницу
         addToHTML() {
@@ -162,45 +162,25 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             this.parentSelector.innerHTML += `
             <div class="${this.classes}">
-                <img src="${this.imgDir}" alt="${this.alt}">
-                <h3 class="menu__item-subtitle">${this.menuSubtitle}"</h3>
-                <div class="menu__item-descr">${this.menuDescription} </div>
+                <img src="${this.img}" alt="${this.alt}">
+                <h3 class="menu__item-subtitle">${this.title}"</h3>
+                <div class="menu__item-descr">${this.descr} </div>
                 <div class="menu__item-divider"></div>
                 <div class="menu__item-price">
                     <div class="menu__item-cost">Цена:</div>
-                    <div class="menu__item-total"><span>${this.menuTotalCost}</span> грн/день</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                 </div>
             </div>`;
         }
               
     }
-    // Создаём объекты с данными для заполнения карточек
-    const menuFitness = {
-        imgDir: "img/tabs/vegy.jpg",
-        menuSubtitle: 'Меню "Фитнес"', 
-        menuDescription:'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
-        menuTotalCost: 9
-    };
-    const menuPremium = {
-        imgDir: "img/tabs/elite.jpg",
-        menuSubtitle: 'Меню “Премиум”', 
-        menuDescription:'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 
-        menuTotalCost: 20
-    };
-    const menuLenten = {
-        imgDir: "img/tabs/post.jpg",
-        menuSubtitle: 'Меню "Постное"', 
-        menuDescription:'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 
-        menuTotalCost: 16
-    };
-    const allMenues = [menuFitness, menuPremium, menuLenten];
-    // Создаём экзепляры класса MenuCard и добавляем на страницу используя метод экземпляра класса .addToHTML
-
-    for (let i of allMenues) {
-        new MenuCard(i.imgDir,i.menuSubtitle, i.menuDescription, i.menuTotalCost,menuFieldContainer, "menu__item").addToHTML();
-    }
-
-
+    // Создаём фетч запрос и с полученными данными постим картинки на страницу
+    fetch("http://localhost:3000/menu")
+        .then(data=>data.json())
+        .then(res=>res.forEach(element => {
+            new MenuCard(element.img, element.title, element.descr, element.price, menuFieldContainer, "menu__item").addToHTML();
+        }));
+        
 // Post запрос
 
 
@@ -283,13 +263,11 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal();
         }, 4000);
 
-    }
+        }
+        
+    });
 
 
-
-
-
-});
 
 
 
