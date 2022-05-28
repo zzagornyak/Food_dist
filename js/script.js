@@ -201,17 +201,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Функция создания get запроса
-    const getData = async(url) => {
-        const res = await fetch(url);
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.satus}`);
-        }
-        return await res.json();
+    const getData = async function(url) {
+        const res = await axios.get(url);
+        // if (!res.ok) {
+        //     throw new Error(`Could not fetch ${url}, status: ${res.satus}`);
+        // }
+        return await res;
     };
     // Создаём get запрос и с полученными данными добавляем табы на страницу
     getData("http://localhost:3000/menu")
     // применение деструктуризации в forEach
-    .then((data)=>data.forEach(({img, title, descr, price}) => {
+    .then((data)=>data.data.forEach(({img, title, descr, price}) => {
         new MenuCard(img, title, descr, price, menuFieldContainer, "menu__item").addToHTML();
     }));
        
@@ -232,16 +232,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Функция post запроса с использование fetch и возврат промиса в формате json
     const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: "POST",
-            // Если json нужно указать headers
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: data,
-        });
+        const res = await axios.post(url, data);
 
-        return res.json();
+        return res;
     };
 
     // Главная функция
@@ -271,16 +264,18 @@ document.addEventListener("DOMContentLoaded", () => {
             // formData.forEach(function(value, key){
             //     object[key] = value;
             // });
+
             // Вариант 2
             const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
             // Создание пост запроса
             postData("http://localhost:3000/requests", json)
-            .then(data => {
-                console.log(data);
+            .then(function (response) {
+                console.log(response);
                 showThanksDialog(message.succes);
                 statusMessage.remove();
-            }).catch(() => {
+            }).catch(function (error) {
+                console.log(error);
                 showThanksDialog(message.failure);
             }).finally(() => {
                 form.reset();
