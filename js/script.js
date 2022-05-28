@@ -1,4 +1,5 @@
 "use strict";
+
 // Для того чтобы скрипт выполнялся после загрузки DOM дерева вешаем отлов события
 document.addEventListener("DOMContentLoaded", () => {
     const tabs = document.querySelectorAll(".tabheader__item"),
@@ -6,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
           tabsParent = document.querySelector(".tabheader__items"),
           tabsDescription = document.querySelectorAll(".tabcontent__descr");
 
+
 // Табы
+
     // Функция скрытия табов
     function hideTabContent() {
         tabsContent.forEach((event) => {
@@ -16,14 +19,17 @@ document.addEventListener("DOMContentLoaded", () => {
             event.classList.remove("tabheader__item_active");
         });        
     }
+
     // Функция показа табов
     function showTabContent(arg=0) {
         tabsContent[arg].classList.remove("tabcontent__invisible");
         tabs[arg].classList.add("tabheader__item_active");
     }
+
     // Скрываем табы, показываем таб по умолчанию
     hideTabContent();
     showTabContent();
+
     // Вешаем лисенер на клик для каждого таба
     tabs.forEach((item, i) => {
         item.addEventListener("click", (event) => {
@@ -31,9 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
             showTabContent(i);
         });
     });
+
+
 // Таймер
+
     // Задаём дату окончания акции
     const endTime = "2022-05-29";
+
     // Функция для формирования окончательной даты
     function getTimeRemaining(deadline) {
         const t = Date.parse(deadline) - Date.parse(new Date()),
@@ -49,6 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "seconds" : seconds
         };
     }
+
+
     // Главная функция 
     function setClock(selector, endtime) {
         const timer = document.querySelector(selector),
@@ -58,8 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
               seconds = timer.querySelector("#seconds"),
               //Включаем повтор функции обновления таймера   
               timeInterval = setInterval(updateClock, 1000);
+
         // Обновляем таймер, чтобы сразу показывалось актуальная дата окончания 
         updateClock();
+
         // Функция обновления таймера
         function updateClock() {
             const t = getTimeRemaining(endtime);
@@ -78,11 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+
     // Запуск главной функции
     setClock(".timer", endTime);
 
 
 // Модальное окно
+
     // Находим нужные классы
     let modal = document.querySelector(".modal"),
         modalOpen = document.querySelectorAll("[data-modal]");
@@ -92,17 +108,18 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "none";
         document.body.style.overflow = "";    
     }
+
     // Функция показа модального окна
     function showModal () {
         modal.style.display = "block";
         document.body.style.overflow = "hidden"; 
         clearInterval(modalTimerId);  
     }
+
     // Вешаем лисенер на клик для каждой кнопки
     modalOpen.forEach(element => {
         element.addEventListener("click", showModal);
     }); 
-
 
     // Вешаем лисенер на клик на подложку модального окна для закрытия модального окна и на кнопку закрытия
     modal.addEventListener("click", (e) => {
@@ -110,16 +127,20 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal(modal);
         }     
     });
+
     // Лисенер на кнопку Escape для закрытия модального окна
     document.addEventListener("keydown", (e) => {
         if (e.code === "Escape" && modal.style.display === "block") {
             closeModal();
         }
     });
+
     // Таймер запуска модального окна
     const modalTimerId = setTimeout(showModal, 10000000000000);
+
     // Лисенер на скрол в котором запускаем функцию показа модального окна при пролистывании до конца страницы
     window.addEventListener("scroll", showModalByScrol);
+
     // Функция открытия модального окна в конце страницы
     function showModalByScrol() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight -1) {
@@ -128,7 +149,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+
 // Карточки "Наше меню на день"
+
     const menuField = document.querySelector(".menu__field"),
           menuFieldContainer = menuField.querySelector(".container");
 
@@ -145,10 +168,12 @@ document.addEventListener("DOMContentLoaded", () => {
             this.transfer = 27;
             this.changeToUAH();
         }
+
         // Метод обмен валют
         changeToUAH() {
             this.price = this.price * this.transfer;
         }
+
         // Метод добавления на страницу
         addToHTML() {
             if (this.classes.length === 0) {
@@ -174,17 +199,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
               
     }
-    // Создаём фетч запрос и с полученными данными постим картинки на страницу
-    fetch("http://localhost:3000/menu")
-        .then(data=>data.json())
-        .then(res=>res.forEach(element => {
-            new MenuCard(element.img, element.title, element.descr, element.price, menuFieldContainer, "menu__item").addToHTML();
-        }));
-        
-// Post запрос
 
+    // Функция создания get запроса
+    const getData = async(url) => {
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.satus}`);
+        }
+        return await res.json();
+    };
+    // Создаём get запрос и с полученными данными добавляем табы на страницу
+    getData("http://localhost:3000/menu")
+    // применение деструктуризации в forEach
+    .then((data)=>data.forEach(({img, title, descr, price}) => {
+        new MenuCard(img, title, descr, price, menuFieldContainer, "menu__item").addToHTML();
+    }));
+       
+        
+// Post запросы
 
     const forms = document.querySelectorAll("form");
+
     // Сообщения для пользователя при обрабоке пост запроса
     const message = {
         loading: "img/form/spinner.svg",
@@ -192,41 +227,55 @@ document.addEventListener("DOMContentLoaded", () => {
         failure: "Что-то пошло не так"
     };
     forms.forEach(form => {
-        postData(form);
+        bindPostData(form);
     });
+
+    // Функция post запроса с использование fetch и возврат промиса в формате json
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            // Если json нужно указать headers
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: data,
+        });
+
+        return res.json();
+    };
+
     // Главная функция
-    function postData(form) {
+    function bindPostData(form) {
         form.addEventListener("submit", (e)=>{
             e.preventDefault();
+
             // Сообщение для пользователя
             const statusMessage = document.createElement("img");
             statusMessage.src = message.loading ;
+
             // Применяем css стили
             statusMessage.style.cssText = `
                 display: block;
                 margin: 0 auto;
             `;
+            
             // Добавление в конец формы
             form.insertAdjacentElement("afterend", statusMessage);
+
             // Создание дата файла
             const formData = new FormData(form);
 
-            // // Вариант 2 если нужно отослать в формате json 
-            const object = {};
-            formData.forEach(function(value, key){
-                object[key] = value;
-            });
-            const json = JSON.stringify(object);
+            // // Если нужно отослать в формате json 
+            // // Вариант 1
+            // const object = {};
+            // formData.forEach(function(value, key){
+            //     object[key] = value;
+            // });
+            // Вариант 2
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            // Создание пост запроса с помощью fetch
-            fetch("server1.php", {
-                method: "POST",
-                body: formData,
-                // Если json нужно указать headers
-                headers: {
-                    "Content-type": "application/json"
-                }
-            }).then(data => data.text())
+            // Создание пост запроса
+            postData("http://localhost:3000/requests", json)
             .then(data => {
                 console.log(data);
                 showThanksDialog(message.succes);
@@ -239,6 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         });
     }
+
     // Красивое оповещение
     function showThanksDialog(message){
         const prevModalDialog = document.querySelector(".modal__dialog");
