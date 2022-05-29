@@ -309,8 +309,112 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
 
         }
-        
+
+
+
+// 1. Получаем все элементы с которыми работаем;
+// 2. Получить индекс текущего слайдера 
+// 3. Написание функции показывающей слайдеры
+//     3.1 показ и скрытие других
+//     3.2 проверка конца и начала
+
+   
+
+// Слайдер
+
+    // Подобие БД
+    const sliderImagesDB = [{
+        img: "img/slider/pepper.jpg",
+        alt: "pepper",
+        hide: false
+    }, {
+        img: "img/slider/food-12.jpg",
+        alt: "food",
+        hide: true
+    }, {
+        img: "img/slider/olive-oil.jpg",
+        alt: "oil",
+        hide: true
+    }, {
+        img: "img/slider/paprika.jpg",
+        alt: "paprika",
+        hide: true
+    },];
+
+    const sliderWrapper = document.querySelector(".offer__slider-wrapper"),
+          sliderSlides = document.querySelectorAll(".offer__slide"),
+          sliderPrev = document.querySelector(".offer__slider-prev"),
+          sliderNext = document.querySelector(".offer__slider-next"),
+          sliderTotalSlides = document.querySelector("#total"),
+          sliderCurrentSlide = document.querySelector("#current");
+
+    // Ивенты
+    sliderPrev.addEventListener("click", () => {
+        getCurrentSlide() === 1 ? sliderAddToHTML(sliderImagesDB.length) : sliderAddToHTML(getCurrentSlide()-1);
     });
+    sliderNext.addEventListener("click", () => {
+        getCurrentSlide() === sliderImagesDB.length ? sliderAddToHTML(1) : sliderAddToHTML(getCurrentSlide()+1);
+    });
+    
+    
+    // Главная функция принимает текущий слайд, и два агрумента по умолчанию это список с данными для картинок и родительский селектор.
+
+    const sliderAddToHTML = (currentSlide, slidersArray = sliderImagesDB, parentSelector = sliderWrapper) => {
+        
+        sliderTotalSlides.textContent = "0" + slidersArray.length;
+        // Очищаем родителя
+        parentSelector.innerHTML = "";
+        // Всем кроме нужного элемента флаг hide
+        slidersArray.forEach(function (elem, index) {
+            if ((index+1) === currentSlide) {
+                elem.hide = false;
+            } else {
+                elem.hide = true;
+            }
+        });
+        // Добавление на страницу
+        slidersArray.forEach((elem) =>{
+            if (!elem.hide) {
+                parentSelector.innerHTML += `
+                <div class="offer__slide">
+                    <img src=${elem.img} alt=${elem.alt}>
+                </div>`;
+                sliderCurrentSlide.textContent = "0" + currentSlide;
+            }  
+        });
+    };
+    
+    const getCurrentSlide = () => {
+        const currentSlide = Number.parseInt(sliderCurrentSlide.textContent);
+        return currentSlide;
+    };
+
+    sliderAddToHTML(1);
+        
+});
+
+
+ {/* <div class="offer__slider-wrapper">
+    <div class="offer__slide show">
+        <img src="img/slider/pepper.jpg" alt="pepper">
+    </div>
+    <div class="offer__slide hide">
+        <img src="img/slider/food-12.jpg" alt="food">
+    </div>
+    <div class="offer__slide hide">
+        <img src="img/slider/olive-oil.jpg" alt="oil">
+    </div>
+    <div class="offer__slide hide">
+        <img src="img/slider/paprika.jpg" alt="paprika"></img> */}
+
+
+
+
+
+
+
+
+
 
 
 
