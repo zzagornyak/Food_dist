@@ -339,9 +339,10 @@ document.addEventListener("DOMContentLoaded", () => {
         img: "img/slider/paprika.jpg",
         alt: "paprika",
         hide: true
-    },];
-
-    const sliderWrapper = document.querySelector(".offer__slider-wrapper"),
+    }, ];
+    
+    const slider = document.querySelector(".offer__slider-wrapper"),
+          sliderWrapper = document.querySelector(".offer__slider-wrapper"),
           sliderSlides = document.querySelectorAll(".offer__slide"),
           sliderPrev = document.querySelector(".offer__slider-prev"),
           sliderNext = document.querySelector(".offer__slider-next"),
@@ -349,70 +350,113 @@ document.addEventListener("DOMContentLoaded", () => {
           sliderCurrentSlide = document.querySelector("#current"),
           sliderField = document.querySelector(".offer__slider-inner"),
           width = window.getComputedStyle(sliderWrapper).width;
-
+    // Две вспомогательные переменные оффсет для перемещения слайдов, слайд индекс для отображение текущего слайда
     let offset = 0,
         slideIndex = 1;
-
-    const changeSliderCounter = () => {
+    // Функция для отображения текущего слайда и общего количества слайдов
+    const changeSliderCounter = function() {
         if (sliderSlides.length <10) {
             sliderTotalSlides.textContent = `0${sliderSlides.length}`;
             sliderCurrentSlide.textContent = `0${slideIndex}`;
+
         } else {
             sliderTotalSlides.textContent = sliderSlides.length;
             sliderCurrentSlide.textContent = slideIndex;
         }
     };    
+    // Первый вызов для корректного отображения
     changeSliderCounter();
-
+    // Полная ширина слайдера и прочие настройки для слайдера
     sliderField.style.width = 100 * sliderSlides.length + "%";
     sliderField.style.display = "flex";
     sliderField.style.transition = "0.5s all";
-
     sliderWrapper.style.overflow = "hidden";
-
+    // Задаём каждому слайдеру ширину
     sliderSlides.forEach(slide => {
         slide.style.width = width;
     });
-
+    // Функция передвижения слайда
+    const moveSlide = () => {
+        sliderField.style.transform = `translateX(-${offset}px)`;
+    };
+    // Клик-ивенты следущий/предыдущий слайды
     sliderNext.addEventListener("click", ()=>{
         if (offset == +width.slice(0, width.length - 2) * (sliderSlides.length -1)) {
             offset = 0;
         } else {
             offset += +width.slice(0, width.length-2);
         }
-        sliderField.style.transform = `translateX(-${offset}px)`;
+        moveSlide();
         if (slideIndex == sliderSlides.length) {
             slideIndex = 1;
+            dotActive(slideIndex-1);
             changeSliderCounter();
         } else {
             slideIndex++;
+            dotActive(slideIndex-1);
             changeSliderCounter();
         }
     });
-    sliderPrev.addEventListener("click", ()=>{
+    sliderPrev.addEventListener("click", () => {
         if (offset == 0) {
             offset = +width.slice(0, width.length - 2) * (sliderSlides.length -1);
         } else {
             offset -= +width.slice(0, width.length-2);
         }
-        sliderField.style.transform = `translateX(-${offset}px)`;
+        moveSlide();
         if (slideIndex == 1) {
             slideIndex = sliderSlides.length;
+            dotActive(slideIndex-1);
             changeSliderCounter();
         } else {
             slideIndex--;
+            dotActive(slideIndex-1);
             changeSliderCounter();
         }
     });
-    sliderPrev.addEventListener("click", ()=>{
+    
+    // Навигация для слайдов
+    slider.style.position = "relative";
 
+    const carouselIndicator = document.createElement("div");
+
+    
+    carouselIndicator.classList.add("carousel-indicators");
+    slider.append(carouselIndicator);
+
+    // Функция создания "точек" для навигации        
+    const addNewDot = function(parentSelector,dataAttr){
+        let dot = document.createElement('div');
+        dot.className = 'dot';
+        parentSelector.append(dot);
+    };
+    // Функция показа активной "точки"
+    const dotActive = (num) => {
+        dot.forEach(element => {
+            element.classList.remove("dot__active");
+        });
+        dot[num].classList.add("dot__active");
+    };
+    // Создаём "точки" для каждого слайда
+    for (let i = 1; i <= sliderImagesDB.length; i++ ) {
+        addNewDot(carouselIndicator, i);
+    }
+
+    const dot = document.querySelectorAll(".dot");
+    dot[0].classList.add("dot__active");
+
+
+    dot.forEach((element, index) => {
+        element.addEventListener("click", (event) => {
+            dotActive(index);
+            slideIndex = index+1;
+            offset = +width.slice(0, width.length - 2) * index;
+            moveSlide();
+            changeSliderCounter();
+            
+        });
     });
-    
-    
-    
 });
-
-
 
 
 
