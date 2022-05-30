@@ -346,67 +346,71 @@ document.addEventListener("DOMContentLoaded", () => {
           sliderPrev = document.querySelector(".offer__slider-prev"),
           sliderNext = document.querySelector(".offer__slider-next"),
           sliderTotalSlides = document.querySelector("#total"),
-          sliderCurrentSlide = document.querySelector("#current");
+          sliderCurrentSlide = document.querySelector("#current"),
+          sliderField = document.querySelector(".offer__slider-inner"),
+          width = window.getComputedStyle(sliderWrapper).width;
 
-    // Ивенты
-    sliderPrev.addEventListener("click", () => {
-        getCurrentSlide() === 1 ? sliderAddToHTML(sliderImagesDB.length) : sliderAddToHTML(getCurrentSlide()-1);
+    let offset = 0,
+        slideIndex = 1;
+
+    const changeSliderCounter = () => {
+        if (sliderSlides.length <10) {
+            sliderTotalSlides.textContent = `0${sliderSlides.length}`;
+            sliderCurrentSlide.textContent = `0${slideIndex}`;
+        } else {
+            sliderTotalSlides.textContent = sliderSlides.length;
+            sliderCurrentSlide.textContent = slideIndex;
+        }
+    };    
+    changeSliderCounter();
+
+    sliderField.style.width = 100 * sliderSlides.length + "%";
+    sliderField.style.display = "flex";
+    sliderField.style.transition = "0.5s all";
+
+    sliderWrapper.style.overflow = "hidden";
+
+    sliderSlides.forEach(slide => {
+        slide.style.width = width;
     });
-    sliderNext.addEventListener("click", () => {
-        getCurrentSlide() === sliderImagesDB.length ? sliderAddToHTML(1) : sliderAddToHTML(getCurrentSlide()+1);
+
+    sliderNext.addEventListener("click", ()=>{
+        if (offset == +width.slice(0, width.length - 2) * (sliderSlides.length -1)) {
+            offset = 0;
+        } else {
+            offset += +width.slice(0, width.length-2);
+        }
+        sliderField.style.transform = `translateX(-${offset}px)`;
+        if (slideIndex == sliderSlides.length) {
+            slideIndex = 1;
+            changeSliderCounter();
+        } else {
+            slideIndex++;
+            changeSliderCounter();
+        }
+    });
+    sliderPrev.addEventListener("click", ()=>{
+        if (offset == 0) {
+            offset = +width.slice(0, width.length - 2) * (sliderSlides.length -1);
+        } else {
+            offset -= +width.slice(0, width.length-2);
+        }
+        sliderField.style.transform = `translateX(-${offset}px)`;
+        if (slideIndex == 1) {
+            slideIndex = sliderSlides.length;
+            changeSliderCounter();
+        } else {
+            slideIndex--;
+            changeSliderCounter();
+        }
+    });
+    sliderPrev.addEventListener("click", ()=>{
+
     });
     
     
-    // Главная функция принимает текущий слайд, и два агрумента по умолчанию это список с данными для картинок и родительский селектор.
-
-    const sliderAddToHTML = (currentSlide, slidersArray = sliderImagesDB, parentSelector = sliderWrapper) => {
-        
-        sliderTotalSlides.textContent = "0" + slidersArray.length;
-        // Очищаем родителя
-        parentSelector.innerHTML = "";
-        // Всем кроме нужного элемента флаг hide
-        slidersArray.forEach(function (elem, index) {
-            if ((index+1) === currentSlide) {
-                elem.hide = false;
-            } else {
-                elem.hide = true;
-            }
-        });
-        // Добавление на страницу
-        slidersArray.forEach((elem) =>{
-            if (!elem.hide) {
-                parentSelector.innerHTML += `
-                <div class="offer__slide">
-                    <img src=${elem.img} alt=${elem.alt}>
-                </div>`;
-                sliderCurrentSlide.textContent = "0" + currentSlide;
-            }  
-        });
-    };
     
-    const getCurrentSlide = () => {
-        const currentSlide = Number.parseInt(sliderCurrentSlide.textContent);
-        return currentSlide;
-    };
-
-    sliderAddToHTML(1);
-        
 });
-
-
- {/* <div class="offer__slider-wrapper">
-    <div class="offer__slide show">
-        <img src="img/slider/pepper.jpg" alt="pepper">
-    </div>
-    <div class="offer__slide hide">
-        <img src="img/slider/food-12.jpg" alt="food">
-    </div>
-    <div class="offer__slide hide">
-        <img src="img/slider/olive-oil.jpg" alt="oil">
-    </div>
-    <div class="offer__slide hide">
-        <img src="img/slider/paprika.jpg" alt="paprika"></img> */}
-
 
 
 
