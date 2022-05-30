@@ -456,8 +456,75 @@ document.addEventListener("DOMContentLoaded", () => {
             
         });
     });
-});
 
+
+    // Калькулятор
+
+    let gender = "",
+          height = "", 
+          weight = "", 
+          age = "",
+          activity = "";
+
+    const chooseGender = document.querySelector("#gender"),
+          chooseHeight = document.querySelector("#height"),
+          chooseWeight = document.querySelector("#weight"),
+          chooseAge = document.querySelector("#age"),
+          low = document.querySelector("#low"),
+          small = document.querySelector("#small"),
+          medium = document.querySelector("#medium"),
+          high = document.querySelector("#high"),
+          result = document.querySelector(".calculating__result").querySelector("span"),
+          getResult = () => {
+              if (gender == "Мужчина" && height && weight && age && activity) {
+                result.textContent = Math.floor((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * activity);
+              } else if (gender == "Женщина" && height && weight && age && activity) {
+                result.textContent = Math.floor(((447,6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * activity));
+              } else {
+                result.textContent = 0;
+              }
+          };
+
+          getResult();
+
+    chooseGender.addEventListener("click", (e) => {
+        if (e.target.textContent == "Мужчина") {
+            gender = e.target.textContent;
+            getResult();
+        } else if (e.target.textContent == "Женщина") {
+            gender = e.target.textContent;
+            getResult();
+        }
+    });
+    chooseHeight.addEventListener("input", (e) => {
+        height = e.target.value;
+        getResult();
+    });
+    chooseWeight.addEventListener("input", (e) => {
+        weight = e.target.value;
+        getResult();
+    });
+    chooseAge.addEventListener("input", (e) => {
+        age = e.target.value;
+        getResult();
+    });
+    low.addEventListener("click", (e) => {
+        activity = 1.2;     
+        getResult(); 
+    });
+    small.addEventListener("click", (e) => {
+        activity = 1.375;
+        getResult();
+    });
+    medium.addEventListener("click", (e) => {
+        activity = 1.55;
+        getResult();
+    });
+    high.addEventListener("click", (e) => {
+        activity = 1.725;
+        getResult();
+    });
+});
 
 
 
