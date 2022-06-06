@@ -1,4 +1,7 @@
 "use strict";
+
+import 'nodelist-foreach-polyfill';
+require('es6-promise').polyfill();
 // Табы
 import tabs from "./modules/tabs";
 // Таймер
@@ -37,15 +40,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }),
     calculator();
 });
-
-
-
-
-
-
-
-
-
-
-
-
